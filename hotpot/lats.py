@@ -97,6 +97,10 @@ class Node:
         self.reward = 0
         self.exhausted = False # If all children are terminal
         self.em = 0  # Exact match, evaluation metric
+        self.heuristic = 0
+
+    def calculate_total_cost(self):
+        return self.value + self.heuristic
 
     def uct(self):
         if self.visits == 0:
@@ -230,6 +234,11 @@ def lats_search(args, task, idx, iterations=30, to_print=True):
     if best_child is None:
         best_child = root
     return best_child.state, best_child.value, all_nodes, best_child.reward, best_child.em
+
+def select_node_astar(node):
+    # Change selection logic to consider total cost (value + heuristic)
+    selected_node = min(node.children, key=lambda n: n.calculate_total_cost(), default=None)
+    return selected_node
 
 def select_node(node):
     while node and node.children:
